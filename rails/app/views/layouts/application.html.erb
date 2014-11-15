@@ -4,8 +4,13 @@
   <title>Tutor</title>
   <%= stylesheet_link_tag    'application', media: 'all' %>
 
+  <script src="http://localhost:8080/socket.io/socket.io.js"></script>
   <script src="//maps.googleapis.com/maps/api/js?key=<%= ENV["GOOGLE_API_KEY_HACKDUKE14"] %>"></script>
   <%= javascript_include_tag 'application' %>
+
+  <script type="text/javascript">
+    window.userIdentityJWT = <%= user_identity_jwt %>;
+  </script>
   
   <%= csrf_meta_tags %>
 </head>

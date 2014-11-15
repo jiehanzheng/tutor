@@ -1,10 +1,33 @@
 <div id="learn" ng-app="tutor">
-  <div ng-controller="LearnController">
+  <div ng-controller="LearnController as learnCtrl">
+    <div ng-hide="selectedCourse">
+      <select ng-model="subjectCode" ng-change="updateCourseNumbers(); courseNumber = null">
+        <option ng-repeat="subject in subjects" value="{{subject.code}}" ng-selected="subject.code == subjectCode">
+          {{subject.code}}
+        </option>
+      </select>
+
+      <select ng-model="courseNumber">
+        <option ng-repeat="course in courses" value="{{course.catalog_nbr.trim()}}" ng-selected="course.catalog_nbr.trim() == courseNumber">
+          {{course.catalog_nbr.trim()}}
+        </option>
+      </select>
+
+      <button ng-click="showTutors()">Show tutors</button>
+
+    </div>
+
+    <div ng-show="selectedCourse">
+      Showing online tutors for {{selectedCourse}}
+    </div>
+
     <div ng-controller="MapController">
       <ui-gmap-google-map class="col-md-6" center='map.center' zoom='map.zoom'>
-
+        <ui-gmap-markers models="learnCtrl.tutors"
+          idKey="id"
+          coords="'coords'"></ui-gmap-markers>
       </ui-gmap-google-map>
     </div>
-  </div>  
+  </div>
 
 </div>
