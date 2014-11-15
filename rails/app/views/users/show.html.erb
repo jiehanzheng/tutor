@@ -1,0 +1,14 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Netid:</strong>
+  <%= @user.netid %>
+</p>
+
+<p>
+  <strong>Courses:</strong>
+  <%= @user.courses %>
+</p>
+
+<%= link_to 'Edit', edit_user_path(@user) %> |
+<%= link_to 'Back', users_path %>
