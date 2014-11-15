@@ -1,4 +1,10 @@
-<div ng-app="tutor">
-  
+<div id="learn" ng-app="tutor">
+  <div ng-controller="LearnController">
+    <div ng-controller="MapController">
+      <ui-gmap-google-map class="col-md-6" center='map.center' zoom='map.zoom'>
+
+      </ui-gmap-google-map>
+    </div>
+  </div>  
 
 </div>
