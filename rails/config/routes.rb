@@ -1,6 +1,10 @@
 Rails.application.routes.draw do
+  get 'dispatch/learn'
+  get 'dispatch/teach'
+
   get 'sessions/create_cheat'
   post 'sessions/destroy'
+
 
   resources :users
 

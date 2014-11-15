@@ -12,5 +12,8 @@
 //
 //= require jquery
 //= require jquery_ujs
-//= require turbolinks
+//= require angular
+//= require lodash/dist/lodash
+//= require lodash
+//= require angular-google-maps/dist/angular-google-maps.js
 //= require_tree .
