@@ -1,10 +1,12 @@
 var app = require('express')();
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
+var http = require('http');
+var httpServer = http.Server(app);
+var io = require('socket.io')(httpServer);
 var debug = require('debug')('app');
 var jwt = require('jsonwebtoken');
 var redis = require('redis');
 var _ = require('lodash');
+var querystring = require('querystring');
 
 // var redisSubscribeClient = redis.createClient();
 
@@ -12,7 +14,7 @@ app.get('/', function(req, res){
   res.send('<h1>Hello world</h1>');
 });
 
-http.listen(8080, function(){
+httpServer.listen(8080, function(){
   console.log('listening on *:8080');
 });
 
@@ -151,6 +153,7 @@ io.on('connection', function(socket) {
     });
 
     tutorSocket.on('end tutoring', function() {
+      debug('end tutoring');
       var tutoringSessionClaim = {
         startTime: startTime,
         endTime: Date.now(),
@@ -158,13 +161,20 @@ io.on('connection', function(socket) {
         tutorId: tutorSocket.user.id
       };
 
+      debug(tutoringSessionClaim);
+
       var token = jwt.sign(tutoringSessionClaim, process.env['JWT_HACKDUKE14']);
 
       // TODO: submit to server
-      http.post()
-
-      tutorSocket.emit('end tutoring', token);
-      studentSocket.emit('end tutoring', token);
+      http.get({
+        hostname: 'localhost',
+        port: '3000',
+        path: '/dispatch/record?' + querystring.stringify({ token: token }),
+      }, function(response) {
+        debug('posted to rails');
+        tutorSocket.emit('end tutoring', token);
+        studentSocket.emit('end tutoring', token);
+      });
     });
   };
 

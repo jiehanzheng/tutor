@@ -9,6 +9,7 @@ app.controller('SessionController', ['$scope', '$http', function($scope, $http) 
   $scope.socket.on('start tutoring', function(startTime) {
     $scope.$apply(function() {
       $scope.inProgress = true;
+      $scope.startTime = startTime;
     });
   });
 
@@ -21,7 +22,6 @@ app.controller('SessionController', ['$scope', '$http', function($scope, $http) 
       $scope.inProgress = false;
     });
   });
-
 }]);
 
 app.controller('NegotiationController', ['$scope', '$http', function($scope, $http) {

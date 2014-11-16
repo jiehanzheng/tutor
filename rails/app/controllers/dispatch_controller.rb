@@ -1,6 +1,4 @@
 class DispatchController < ApplicationController
-  skip_before_filter :verify_authenticity_token, :only => [:record]
-
   def learn
   end
 
@@ -8,7 +6,9 @@ class DispatchController < ApplicationController
   end
 
   def record
-    claim = JWT.decode(params[:token], ENV['JWT_HACKDUKE14'])
-    
+    claim = JWT.decode(params[:token], ENV['JWT_HACKDUKE14'])[0]
+    tutoring_session = TutoringSession.from_claim(claim)
+    tutoring_session.save!
+    render nothing: true
   end
 end
