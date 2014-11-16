@@ -84,17 +84,21 @@ io.on('connection', function(socket) {
       var nextTutorTimer = setTimeout(askATutor, 22000);
       lastTutorAskedSocket = tutorSocket;
       
-      tutorSocket.on('accept offer', function() {
-        tutorSocket.removeListener('accept offer');
+      var onAcceptOffer = function() {
+        debug('accept offer');
+        tutorSocket.removeListener('accept offer', onAcceptOffer);
         clearTimeout(nextTutorTimer);
-        negotiateMeeting(/* student */ socket, tutorSocket);
-      });
+        negotiateMeeting(/* student */socket, tutorSocket);
+      };
+      var acceptListener = tutorSocket.on('accept offer', onAcceptOffer);
 
-      tutorSocket.on('decline offer', function() {
+      var onDeclineOffer = function() {
+        debug('decline offer');
         tutorSocket.removeListener('decline offer');
         clearTimeout(nextTutorTimer);
         askATutor();
-      });
+      };
+      tutorSocket.on('decline offer', onDeclineOffer);
     };
 
     // now bootstrap the process by asking first tutor
@@ -105,7 +109,27 @@ io.on('connection', function(socket) {
     studentSocket.emit('negotiation start');
     tutorSocket.emit('negotiation start');
 
+    studentSocket.on('new private message', function(messageText) {
+      studentSocket.emit('new private message', {
+        sender: 'Me',
+        text: messageText
+      });
+      tutorSocket.emit('new private message', {
+        sender: 'Student',
+        text: messageText
+      });
+    });
 
+    tutorSocket.on('new private message', function(messageText) {
+      tutorSocket.emit('new private message', {
+        sender: 'Me',
+        text: messageText
+      });
+      studentSocket.emit('new private message', {
+        sender: 'Tutor',
+        text: messageText
+      });
+    });
   };
 
   socket.on('become tutor', function(coords) {

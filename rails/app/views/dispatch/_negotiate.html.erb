@@ -1,10 +1,21 @@
 <div ng-controller="NegotiationController">
-  <div ng-if="negotiating">
-    <div id="messages">
-      <div class="message" ng-repeat="chatMessage in chatMessages">
-        <span class="sender">{{chatMessage.sender}}</span>
-        <span class="text">{{chatMessage.text}}</span>
+  <div ng-show="negotiating">
+    NEGOTIATING!!
+    <div id="place">
+      
+    </div>
+
+    <div id="chat">
+      <div id="messages">
+        <div class="message" ng-repeat="chatMessage in chatMessages">
+          <span class="sender">{{chatMessage.sender}}</span>
+          <span class="text">{{chatMessage.text}}</span>
+        </div>
       </div>
+      <form ng-submit="sendMessage()">
+        <input type="text" ng-model="messageDraft" />
+        {{messageDraft}}
+      </form>
     </div>
   </div>
 </div>

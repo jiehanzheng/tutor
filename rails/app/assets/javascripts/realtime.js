@@ -5,6 +5,24 @@ app.controller('NegotiationController', ['$scope', function($scope) {
   $scope.chatMessages = [{ 
     sender: 'System', text: 'Please say hi to each other and negotiate a meeting place!' }];
 
+  $scope.socket.on('negotiation start', function() {
+    $scope.$apply(function() {
+      $scope.negotiating = true;
+    });
+  });
+
+  $scope.messageDraft = "Hello, nice to meet you!";
+
+  $scope.sendMessage = function() {
+    $scope.socket.emit('new private message', $scope.messageDraft);
+    $scope.messageDraft = "";
+  };
+
+  $scope.socket.on('new private message', function(chatMessage) {
+    $scope.$apply(function() {
+      $scope.chatMessages.push(chatMessage);
+    });
+  });
 
 }]);
 
@@ -29,11 +47,11 @@ app.controller('TeachController', ['$scope', function($scope) {
   });
 
   $scope.acceptOffer = function() {
-
+    socket.emit('accept offer');
   };
 
   $scope.declineOffer = function() {
-
+    socket.emit('decline offer');
   };
 
 }]);
