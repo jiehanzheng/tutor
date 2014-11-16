@@ -2,6 +2,28 @@ var app = angular.module('tutor', ['google-maps'.ns()]);
 
 var apiProxy = 'http://localhost:8080/duke_api/';
 
+app.controller('SessionController', ['$scope', '$http', function($scope, $http) {
+  $scope.inProgress = false;
+  $scope.startTime = null;
+
+  $scope.socket.on('start tutoring', function(startTime) {
+    $scope.$apply(function() {
+      $scope.inProgress = true;
+    });
+  });
+
+  $scope.endTutoring = function() {
+    $scope.socket.emit('end tutoring');
+  };
+
+  $scope.socket.on('end tutoring', function(token) {
+    $scope.$apply(function() {
+      $scope.inProgress = false;
+    });
+  });
+
+}]);
+
 app.controller('NegotiationController', ['$scope', '$http', function($scope, $http) {
   $scope.negotiating = false;
   $scope.isTutor = false;
@@ -123,6 +145,9 @@ app.controller('NegotiationController', ['$scope', '$http', function($scope, $ht
 app.controller('TeachController', ['$scope', function($scope) {
   var socket = io('http://localhost:8080');
   socket.emit('authenticate', window.userIdentityJWT);
+
+  // TODO: real lat/lng
+
   socket.emit('become tutor', { latitude: 36.001869, longitude: -78.931487 });
 
   // TODO: deal with multiple offers
@@ -142,10 +167,12 @@ app.controller('TeachController', ['$scope', function($scope) {
 
   $scope.acceptOffer = function() {
     socket.emit('accept offer');
+    $scope.pendingOffer = null;
   };
 
   $scope.declineOffer = function() {
     socket.emit('decline offer');
+    $scope.pendingOffer = null;
   };
 
 }]);

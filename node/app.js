@@ -142,6 +142,30 @@ io.on('connection', function(socket) {
     tutorSocket.on('change place', function(place) {
       studentSocket.emit('change place', place);
     });
+
+    var startTime = null;
+    tutorSocket.on('start tutoring', function() {
+      startTime = Date.now();
+      tutorSocket.emit('start tutoring', startTime);
+      studentSocket.emit('start tutoring', startTime);
+    });
+
+    tutorSocket.on('end tutoring', function() {
+      var tutoringSessionClaim = {
+        startTime: startTime,
+        endTime: Date.now(),
+        studentId: studentSocket.user.id,
+        tutorId: tutorSocket.user.id
+      };
+
+      var token = jwt.sign(tutoringSessionClaim, process.env['JWT_HACKDUKE14']);
+
+      // TODO: submit to server
+      http.post()
+
+      tutorSocket.emit('end tutoring', token);
+      studentSocket.emit('end tutoring', token);
+    });
   };
 
   socket.on('become tutor', function(coords) {
