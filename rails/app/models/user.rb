@@ -40,12 +40,29 @@ class User < ActiveRecord::Base
     save!
   end
 
+  def tutor_reputation
+    taught_sessions.all.sum(:rating_for_tutor)
+  end
+
+  def student_reputation
+    learnt_sessions.all.sum(:rating_for_student)
+  end
+
   def average_tutor_rating
     taught_sessions.all.average(:rating_for_tutor)
   end
 
   def average_student_rating
     learnt_sessions.all.average(:rating_for_student)
+  end
+
+  def average_tutor_rating_by_course
+    return nil if courses.nil?
+    average_tutor_rating_by_course = {}
+    courses.each do |course|
+      average_tutor_rating_by_course[course] = taught_sessions.where(course: course).average(:rating_for_tutor)
+    end
+    average_tutor_rating_by_course
   end
 
 end

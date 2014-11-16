@@ -96,7 +96,7 @@ io.on('connection', function(socket) {
         debug('accept offer');
         clearTimeout(nextTutorTimer);
         tutorMatched = true;
-        negotiateMeeting(/* student */socket, tutorSocket);
+        negotiateMeeting(/* student */socket, tutorSocket, course);
       });
 
       tutorSocket.once('decline offer', function() {
@@ -111,7 +111,7 @@ io.on('connection', function(socket) {
     askATutor();
   });
 
-  var negotiateMeeting = function(studentSocket, tutorSocket) {
+  var negotiateMeeting = function(studentSocket, tutorSocket, course) {
     studentSocket.emit('negotiation start', {
       peer: tutorSocket.user,
       isTutor: false
@@ -176,7 +176,8 @@ io.on('connection', function(socket) {
         startTime: startTime,
         endTime: Date.now(),
         studentId: studentSocket.user.id,
-        tutorId: tutorSocket.user.id
+        tutorId: tutorSocket.user.id,
+        course: course
       };
 
       debug(tutoringSessionClaim);

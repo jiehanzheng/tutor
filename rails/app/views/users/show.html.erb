@@ -2,4 +2,22 @@
   <h1><%= @user.display_name %> <small><%= @user.netid %></small></h1>
 </div>
 
+<div class="row">
+  <div id="teaching" class="col-sm-6">
+    <h2>Teaching</h2>
+    <%= @user.tutor_reputation %>
+    <% unless @user.average_tutor_rating_by_course.nil? %>
+      <% @user.average_tutor_rating_by_course.each do |course, rating| %>
+        <div>
+          <%= course %>,
+          <%= rating %>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
 
+  <div id="learning" class="col-sm-6">
+    <h2>Learning</h2>
+    <%= @user.student_reputation %>
+  </div>
+</div>
