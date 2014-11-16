@@ -1,6 +1,8 @@
 var app = angular.module('tutor', ['google-maps'.ns()]);
 
-app.controller('NegotiationController', ['$scope', function($scope) {
+var apiProxy = 'http://localhost:8080/duke_api/';
+
+app.controller('NegotiationController', ['$scope', '$http', function($scope, $http) {
   $scope.negotiating = false;
   $scope.chatMessages = [{ 
     sender: 'System', text: 'Please say hi to each other and negotiate a meeting place!' }];
@@ -23,6 +25,39 @@ app.controller('NegotiationController', ['$scope', function($scope) {
       $scope.chatMessages.push(chatMessage);
     });
   });
+
+  // categories flattened to just one level
+  $scope.categories = [];
+
+  // load places category
+  $http.get(apiProxy + 'places/categories')
+    .success(function(nestedCategories) {
+      var flattenedCategories = [];
+
+      var flatten = function(nestedCategories, category, namePrefix) {
+        var name = namePrefix + ' - ' + nestedCategories.category;
+
+        flattenedCategories.push({
+          name: name,
+          category: category,
+          catId: nestedCategories.cat_id
+        });
+
+        if (nestedCategories.no_child_cats) {
+          return;
+        }
+
+        _.forEach(nestedCategories.children, function(nestedCategories) {
+          flatten(nestedCategories, category, name);
+        });
+      };
+
+      _.forEach(nestedCategories, function(firstLevelCategory) {
+        flatten(firstLevelCategory, firstLevelCategory.category, firstLevelCategory.category);
+      });
+
+      $scope.categories = flattenedCategories;
+    });
 
 }]);
 
@@ -79,8 +114,6 @@ app.controller('LearnController', ['$scope', '$http', function($scope, $http) {
     console.log(user);
     this.socketAuthenticated = true;
   });
-
-  var apiProxy = 'http://localhost:8080/duke_api/';
 
   // load subjects
   $http.get(apiProxy + 'curriculum/list_of_values/fieldname/SUBJECT')

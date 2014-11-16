@@ -2,7 +2,17 @@
   <div ng-show="negotiating">
     NEGOTIATING!!
     <div id="place">
-      
+<!--       <select ng-model="subjectCode" ng-change="updateCourseNumbers(); courseNumber = null">
+        <option ng-repeat="subject in subjects" value="{{subject.code}}" ng-selected="subject.code == subjectCode">
+          {{subject.code}}
+        </option>
+      </select>
+
+      <select ng-model="courseNumber">
+        <option ng-repeat="course in courses" value="{{course.catalog_nbr.trim()}}" ng-selected="course.catalog_nbr.trim() == courseNumber">
+          {{course.catalog_nbr.trim()}}
+        </option>
+      </select> -->
     </div>
 
     <div id="chat">
