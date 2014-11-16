@@ -112,8 +112,14 @@ io.on('connection', function(socket) {
   });
 
   var negotiateMeeting = function(studentSocket, tutorSocket) {
-    studentSocket.emit('negotiation start', /* isTutor */ false);
-    tutorSocket.emit('negotiation start', /* isTutor */ true);
+    studentSocket.emit('negotiation start', {
+      peer: tutorSocket.user,
+      isTutor: false
+    });
+    tutorSocket.emit('negotiation start', {
+      peer: studentSocket.user,
+      isTutor: true
+    });
 
     studentSocket.on('new private message', function(messageText) {
       studentSocket.emit('new private message', {

@@ -21,6 +21,7 @@ class DispatchController < ApplicationController
       tutoring_session.rating_for_tutor = params[:rating_for_tutor].to_i
     end
     tutoring_session.save!
+
     redirect_to(:back)
   end
 end

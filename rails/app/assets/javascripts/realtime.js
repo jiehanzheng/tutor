@@ -17,7 +17,6 @@ app.controller('SessionController', ['$scope', '$http', '$interval', '$location'
       $("#session_modal").modal({
         backdrop: 'static'
       });
-      
     });
 
     $interval(function() {
@@ -44,13 +43,15 @@ app.controller('SessionController', ['$scope', '$http', '$interval', '$location'
 app.controller('NegotiationController', ['$scope', '$http', function($scope, $http) {
   $scope.negotiating = false;
   $scope.isTutor = false;
+  $scope.peer = {};
   $scope.chatMessages = [{ 
     sender: 'System', text: 'Please say hi to each other and negotiate a meeting place!' }];
 
-  $scope.socket.on('negotiation start', function(isTutor) {
+  $scope.socket.on('negotiation start', function(state) {
     $scope.$apply(function() {
       $scope.negotiating = true;
-      $scope.isTutor = isTutor;
+      $scope.isTutor = state.isTutor;
+      $scope.peer = state.peer;
       $('#negotiation_modal').modal({
         backdrop: 'static'
       });
@@ -170,10 +171,11 @@ app.controller('TeachController', ['$scope', function($scope) {
   var socket = io('http://localhost:8080');
   socket.emit('authenticate', window.userIdentityJWT);
 
-  // TODO: real lat/lng
-
-  socket.emit('become tutor', { latitude: 36.001869, longitude: -78.931487 });
-
+  navigator.geolocation.getCurrentPosition(function(position) {
+    console.debug(position);
+    socket.emit('become tutor', position.coords);
+  });
+  
   // TODO: deal with multiple offers
   $scope.socket = socket;
 
@@ -322,6 +324,10 @@ app.controller('CoursesSelectorController', ['$scope', function($scope) {
   $scope.addDraft = function() {
     if ($scope.courseDraft.length == 0) {
       return;
+    }
+
+    if (!$scope.courses) {
+      $scope.courses = [];
     }
 
     $scope.courses.push($scope.courseDraft);

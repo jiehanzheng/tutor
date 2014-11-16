@@ -19,12 +19,20 @@
             </form>
           </div>
 
-          <div class="col-xs-6" id="place">
-            <div class="panel panel-default">
+          <div class="col-xs-6" id="place_and_info">
+            <div id="place" class="panel panel-default">
               <div class="panel-heading">Location</div>
               <div class="panel-body">
                 <select ng-model="placeCategory" ng-options="c.name group by c.category for c in placeCategories track by c.catId" ng-change="pushPlaceCategoryUpdate()"></select>
                 <select ng-model="place" ng-options="p.name for p in places track by p.place_id" ng-change="pushPlaceUpdate()"></select>
+              </div>
+            </div>
+
+            <div id="info" class="panel panel-default">
+              <div class="panel-heading">Contact information</div>
+              <div class="panel-body">
+                <div class="display_name">{{peer.display_name}}</div>
+                <div class="phone">{{peer.phone}}</div>
               </div>
             </div>
           </div>

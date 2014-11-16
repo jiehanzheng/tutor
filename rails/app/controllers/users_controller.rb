@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: [:show]
+  before_action :set_user, only: [:show, :update]
 
   # GET /users
   # GET /users.json
@@ -23,10 +23,7 @@ class UsersController < ApplicationController
     respond_to do |format|
       if @user != current_user
         format.html { redirect_to :root, warning: 'You just can\'t do that' }
-        return
-      end
-
-      if @user.update(user_params)
+      elsif @user.update(user_params)
         format.html { redirect_to :root, notice: 'User was successfully updated.' }
       else
         format.html { render :edit }
@@ -42,6 +39,6 @@ class UsersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def user_params
-      params.require(:user).permit(:courses)
+      params.require(:user).permit(:courses => [])
     end
 end
