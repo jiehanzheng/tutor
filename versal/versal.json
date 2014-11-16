@@ -1,0 +1,10 @@
+{
+  "launcher": "iframe",
+  "name": "tutor",
+  "version": "0.0.1",
+  "title": "Tutoring",
+  "description": "Does nothing just yet",
+  "author": "anonymous",
+  "defaultConfig": {},
+  "defaultUserState": {}
+}

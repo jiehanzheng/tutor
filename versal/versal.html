@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Empty gadget</title>
+<script src="bower_components/versal-component-runtime/dist/runtime.min.js"></script>
+<link rel="import" href="bower_components/versal-gadget-api/versal-gadget-api.html">
+<style>
+input {
+  font-size: 20px;
+  padding: 5px;
+  min-width: 300px;
+}
+input[readonly] {
+  border: 1px solid transparent;
+  display: none;
+}
+iframe {
+  width: 100%;
+  height: 680px;
+  border: none;
+}
+</style>
+</head>
+
+<body>
+<input type="text" name="courseName" readonly value="" placeholder="Class name (e.g. COMPSCI 201)">
+Need face-to-face help?  Connect with our community tutors!
+<iframe id="tutor"></iframe>
+</body>
+
+<script>
+window.addEventListener('HTMLImportsLoaded', function(){
+  var courseName = document.querySelector('[name=courseName]');
+  var iframe = document.querySelector('iframe#tutor');
+  var player = new VersalPlayerAPI();
+
+  courseName.addEventListener('change', function(e){
+    player.setAttribute(courseName.name, courseName.value);
+  });
+
+  player.on('attributesChanged', function(data){
+    if(data.courseName) {
+      courseName.value = data.courseName;
+    };
+  });
+
+  player.on('editableChanged', function(editable) {
+    courseName.readOnly = !editable.editable;
+    if (!editable.editable) {
+      iframe.src = 'http://localhost:3000/dispatch/learn?course=' + encodeURIComponent(courseName.value);
+      iframe.style.display = 'block';
+    } else {
+      iframe.src = '';
+      iframe.style.display = 'none';
+    }
+  });
+
+  player.setHeight(700);
+  player.startListening();
+});
+</script>
+</html>
