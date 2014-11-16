@@ -69,7 +69,7 @@ io.on('connection', function(socket) {
         return;
       }
 
-      var tutorSocket = socketsForCourse[0];
+      var tutorSocket = socketsForCourse.splice(0, 1)[0];
 
       // TODO: take into consideration exact delays (rather than 2s)
 
@@ -84,21 +84,17 @@ io.on('connection', function(socket) {
       var nextTutorTimer = setTimeout(askATutor, 22000);
       lastTutorAskedSocket = tutorSocket;
       
-      var onAcceptOffer = function() {
+      tutorSocket.once('accept offer', function() {
         debug('accept offer');
-        tutorSocket.removeListener('accept offer', onAcceptOffer);
         clearTimeout(nextTutorTimer);
         negotiateMeeting(/* student */socket, tutorSocket);
-      };
-      var acceptListener = tutorSocket.on('accept offer', onAcceptOffer);
+      });
 
-      var onDeclineOffer = function() {
+      tutorSocket.once('decline offer', function() {
         debug('decline offer');
-        tutorSocket.removeListener('decline offer');
         clearTimeout(nextTutorTimer);
         askATutor();
-      };
-      tutorSocket.on('decline offer', onDeclineOffer);
+      });
     };
 
     // now bootstrap the process by asking first tutor

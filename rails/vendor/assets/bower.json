@@ -1,6 +1,7 @@
 {
   "name": "dsl-generated dependencies",
   "dependencies": {
-    "angular-google-maps": "latest"
+    "angular-google-maps": "latest",
+    "angular-timer": "latest"
   }
 }

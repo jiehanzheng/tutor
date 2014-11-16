@@ -115,7 +115,7 @@ app.controller('NegotiationController', ['$scope', '$http', function($scope, $ht
   });
 
   $scope.startTutoring = function() {
-
+    $scope.socket.emit('start tutoring');
   };
 
 }]);
@@ -236,6 +236,11 @@ app.controller('LearnController', ['$scope', '$http', function($scope, $http) {
         return tutor.id == tutorId;
       });
     });
+  });
+
+  socket.on('no tutors available', function() {
+    console.debug('no tutors available');
+    alert('We are sorry, but no tutors are able to provide service at this time.');
   });
 }]);
 
