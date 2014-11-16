@@ -9,10 +9,18 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h4 class="modal-title">Pending offer</h4>
+            <h4 class="modal-title">Pending offer for {{pendingOffer.course}}</h4>
           </div>
           <div class="modal-body">
-            {{pendingOffer}}
+            <div class="media">
+              <div class="media-left">
+                <img src="/assets/hackduke.svg" width=200 />
+              </div>
+              <div class="media-body">
+                <h4 class="media-heading">{{pendingOffer.student.display_name}}</h4>
+                Average student rating: {{pendingOffer.student.average_student_rating}}
+              </div>
+            </div>
           </div>
           <div class="modal-footer">
             <button class="btn btn-default" ng-click="declineOffer()">Decline offer</button>

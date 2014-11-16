@@ -198,8 +198,10 @@ app.controller('TeachController', ['$scope', function($scope) {
   });
 
   socket.on('offer expired', function() {
-    console.log('offer expired');
-    $scope.pendingOffer = null;
+    $scope.$apply(function() {
+      console.log('offer expired');
+      $scope.pendingOffer = null;
+    })
   });
 
   $scope.acceptOffer = function() {
