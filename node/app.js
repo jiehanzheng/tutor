@@ -59,6 +59,17 @@ io.on('connection', function(socket) {
       }
     });
 
+    // sort them!
+    socketsForCourse = _.sortBy(socketsForCourse, function(s) {
+      if (s.user.average_tutor_rating == null) {
+        return 0;
+      }
+
+      return -s.user.average_tutor_rating;
+    });
+
+    // debug(socketsForCourse);
+
     // now let's ask
     var lastTutorAskedSocket = null;
     var tutorMatched = false;
