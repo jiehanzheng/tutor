@@ -1,6 +1,18 @@
-<h1>Editing user</h1>
+<h1>Class that I can tutor</h1>
 
-<%= render 'form' %>
+<%= form_for(@user) do |f| %>
+  <div ng-app="tutor">
+    <div ng-controller="CoursesSelectorController" ng-init='courses = <%= @user.courses.to_json.html_safe %>'>
+      <div ng-repeat="course in courses track by $index">
+        {{course}} <a href="#" ng-click="trash($index)"><span class="glyphicon glyphicon-trash"></span></a>
+        <input type="hidden" name="user[courses][]" value="{{course}}"/>
+      </div>
+      <input type="text" ng-model="courseDraft" />
+      <a href="#" ng-click="addDraft()"><span class="glyphicon glyphicon-plus"></span></a>
+    </div>
+  </div>
+  <div class="actions">
+    <input type="submit" class="btn btn-primary"></input>
+  </div>
+<% end %>
 
-<%= link_to 'Show', @user %> |
-<%= link_to 'Back', users_path %>

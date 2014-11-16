@@ -30,6 +30,7 @@ gem "bower-rails", "~> 0.9.1"
 gem 'angularjs-rails'
 gem 'bootstrap-sass', '~> 3.3.1'
 gem 'jwt'
+gem 'net-ssh'
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'

@@ -41,6 +41,7 @@
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><%= current_user.netid %> <span class="caret"></span></a>
             <ul class="dropdown-menu" role="menu">
+              <li><%= link_to "My profile page", user_path(current_user.id) %></li>
               <li><a href="/users/edit">Update classes I can teach</a></li>
               <li class="divider"></li>
               <li><a href="/sessions/destroy" data-method="post">Sign out</a></li>

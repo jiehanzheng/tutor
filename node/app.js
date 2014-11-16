@@ -86,7 +86,8 @@ io.on('connection', function(socket) {
 
       tutorSocket.emit('offer', {
         expiry: 20 /* seconds */,
-        student: socket.user
+        student: socket.user,
+        course: course
       });
       var nextTutorTimer = setTimeout(askATutor, 22000);
       lastTutorAskedSocket = tutorSocket;
@@ -101,6 +102,7 @@ io.on('connection', function(socket) {
       tutorSocket.once('decline offer', function() {
         debug('decline offer');
         clearTimeout(nextTutorTimer);
+        lastTutorAskedSocket = null;
         askATutor();
       });
     };

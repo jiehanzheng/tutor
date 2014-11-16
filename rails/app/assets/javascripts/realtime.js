@@ -185,18 +185,29 @@ app.controller('TeachController', ['$scope', function($scope) {
     });
   });
 
-  socket.on('offer expired', function() {
+  $scope.$watch('pendingOffer', function(newValue, oldValue) {
+    if (newValue != null) {
+      $('#offer_modal').modal({
+        backdrop: false
+      });
+    } else {
+      $('#offer_modal').modal('hide');
+    }
+  });
 
+  socket.on('offer expired', function() {
+    console.log('offer expired');
+    $scope.pendingOffer = null;
   });
 
   $scope.acceptOffer = function() {
-    socket.emit('accept offer');
     $scope.pendingOffer = null;
+    socket.emit('accept offer');
   };
 
   $scope.declineOffer = function() {
-    socket.emit('decline offer');
     $scope.pendingOffer = null;
+    socket.emit('decline offer');
   };
 
 }]);
@@ -303,8 +314,21 @@ app.controller('MapController', ['$scope', function($scope) {
     },
     zoom: 14
   };
+}]);
 
-  // $scope.tutors
+app.controller('CoursesSelectorController', ['$scope', function($scope) {
+  $scope.courseDraft = "";
 
+  $scope.addDraft = function() {
+    if ($scope.courseDraft.length == 0) {
+      return;
+    }
 
+    $scope.courses.push($scope.courseDraft);
+    $scope.courseDraft = "";
+  };
+
+  $scope.trash = function(courseToDelete) {
+    $scope.courses.splice(courseToDelete, 1);
+  };
 }]);
