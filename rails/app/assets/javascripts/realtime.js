@@ -214,7 +214,7 @@ app.controller('TeachController', ['$scope', function($scope) {
 
 }]);
 
-app.controller('LearnController', ['$scope', '$http', function($scope, $http) {
+app.controller('LearnController', ['$scope', '$http', '$location', function($scope, $http, $location) {
   $scope.selectedCourse = null;
 
   $scope.subjectCode = "COMPSCI";
@@ -306,6 +306,14 @@ app.controller('LearnController', ['$scope', '$http', function($scope, $http) {
     console.debug('no tutors available');
     alert('We are sorry, but no tutors are able to provide service at this time.');
   });
+
+  // if a course name is passed from versal, load it
+  if (($location.search()).course != undefined) {
+    $scope.selectedCourse = ($location.search()).course;
+
+    socket.emit('subscribe to tutor updates for course', $scope.selectedCourse);
+    socket.emit('list online tutors for course', $scope.selectedCourse);
+  }
 }]);
 
 app.controller('MapController', ['$scope', function($scope) {

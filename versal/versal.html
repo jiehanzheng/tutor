@@ -47,7 +47,7 @@ window.addEventListener('HTMLImportsLoaded', function(){
   player.on('editableChanged', function(editable) {
     courseName.readOnly = !editable.editable;
     if (!editable.editable) {
-      iframe.src = 'http://localhost:3000/dispatch/learn?course=' + encodeURIComponent(courseName.value);
+      iframe.src = 'http://localhost:3000/dispatch/learn/#/?course=' + encodeURIComponent(courseName.value);
       iframe.style.display = 'block';
     } else {
       iframe.src = '';
