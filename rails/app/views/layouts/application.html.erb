@@ -16,9 +16,83 @@
 </head>
 <body>
 
-Welcome, <%= current_user.try(:netid) %>
+<div class="container">
+
+<nav class="navbar navbar-default" role="navigation">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#header_nav">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">tUBER Overflow</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="header_nav">
+      <ul class="nav navbar-nav">
+        <li><a href="/dispatch/learn">Learn</span></a></li>
+        <li><a href="/dispatch/teach">Teach</a></li>
+      </ul>
+
+      <ul class="nav navbar-nav navbar-right">
+        <% if current_user %>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><%= current_user.netid %> <span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu">
+              <li><a href="/users/edit">Update classes I can teach</a></li>
+              <li class="divider"></li>
+              <li><a href="/sessions/destroy" data-method="post">Sign out</a></li>
+            </ul>
+          </li>
+        <% else %>
+          <li><a href="/sessions/signin">Sign in</a></li>
+        <% end %>
+      </ul>
+    </div>
+
+
+  </div>
+</nav>
+
+<% if current_user %>
+  <% if @tutoring_sessions_without_rating_for_tutor.any? %>
+    <div class="panel panel-warning">
+      <div class="panel-heading">You haven&rsquo;t rated your tutor yet!</div>
+      <ul class="list-group">
+      <% @tutoring_sessions_without_rating_for_tutor.each do |tutoring_session| %>
+        <li class="list-group-item">
+          <p>Session with <%= tutoring_session.tutor.netid %> on <%= tutoring_session.created_at %></p>
+          <% (1..5).each do |rating| %>
+            <%= link_to '<span class="glyphicon glyphicon-star"></span>'.html_safe,  dispatch_rate_url + '?id=' + tutoring_session.id.to_s + '&rating_for_tutor=' + rating.to_s, method: :post %>
+          <% end %>
+        </li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <% if @tutoring_sessions_without_rating_for_student.any? %>
+    <div class="panel panel-warning">
+      <div class="panel-heading">You haven&rsquo;t rated your student yet!</div>
+      <ul class="list-group">
+      <% @tutoring_sessions_without_rating_for_student.each do |tutoring_session| %>
+        <li class="list-group-item">
+          <p>Session with <%= tutoring_session.student.netid %> on <%= tutoring_session.created_at %></p>
+          <% (1..5).each do |rating| %>
+            <%= link_to '<span class="glyphicon glyphicon-star"></span>'.html_safe,  dispatch_rate_url + '?id=' + tutoring_session.id.to_s + '&rating_for_student=' + rating.to_s, method: :post %>
+          <% end %>
+        </li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+<% end %>
 
 <%= yield %>
+
+</div>
 
 </body>
 </html>

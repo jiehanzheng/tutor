@@ -1,9 +1,18 @@
 <div ng-controller="SessionController">
-  <div ng-show="inProgress">
-    IN PROGRESS!!
-    <div id="timer">
-      {{startTime}}
-    </div>
-    <button ng-click="endTutoring()">End tutoring</button>
-  </div>
+  <div id="session_modal" class="modal fade">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Tutoring in progress</h4>
+        </div>
+        <div class="modal-body">
+          {{timeElapsed}}
+        </div>
+        <div class="modal-footer">
+          <button ng-show="isTutor" class="btn btn-primary" ng-click="endTutoring()">End tutoring</button>
+          <button ng-hide="isTutor" class="btn btn-default" ng-click="endTutoring()" disabled>Wait for tutor to end session</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
 </div>

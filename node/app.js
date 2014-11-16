@@ -61,7 +61,12 @@ io.on('connection', function(socket) {
 
     // now let's ask
     var lastTutorAskedSocket = null;
+    var tutorMatched = false;
     var askATutor = function() {
+      if (tutorMatched) {
+        return;
+      }
+
       if (lastTutorAskedSocket != null) {
         lastTutorAskedSocket.emit('offer expired', 'sorry you are too slow');
       }
@@ -89,6 +94,7 @@ io.on('connection', function(socket) {
       tutorSocket.once('accept offer', function() {
         debug('accept offer');
         clearTimeout(nextTutorTimer);
+        tutorMatched = true;
         negotiateMeeting(/* student */socket, tutorSocket);
       });
 
@@ -148,8 +154,12 @@ io.on('connection', function(socket) {
     var startTime = null;
     tutorSocket.on('start tutoring', function() {
       startTime = Date.now();
-      tutorSocket.emit('start tutoring', startTime);
-      studentSocket.emit('start tutoring', startTime);
+      tutorSocket.emit('start tutoring', {
+        startTime: startTime,
+        isTutor: true });
+      studentSocket.emit('start tutoring', {
+        startTime: startTime,
+        isTutor: false });
     });
 
     tutorSocket.on('end tutoring', function() {

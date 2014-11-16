@@ -5,39 +5,46 @@
     <%= render 'session' %>
     <%= render 'negotiate' %>
 
-    <div ng-hide="selectedCourse">
-      <select ng-model="subjectCode" ng-change="updateCourseNumbers(); courseNumber = null">
-        <option ng-repeat="subject in subjects" value="{{subject.code}}" ng-selected="subject.code == subjectCode">
-          {{subject.code}}
-        </option>
-      </select>
+    <div class="panel panel-primary">
+      <div class="panel-heading">Live tutor map for your class</div>
+      <div class="panel-body">
+        <form class="form-inline" role="form" ng-hide="selectedCourse">
+          <select class="form-control" ng-model="subjectCode" ng-change="updateCourseNumbers(); courseNumber = null">
+            <option ng-repeat="subject in subjects" value="{{subject.code}}" ng-selected="subject.code == subjectCode">
+              {{subject.code}}
+            </option>
+          </select>
 
-      <select ng-model="courseNumber">
-        <option ng-repeat="course in courses" value="{{course.catalog_nbr.trim()}}" ng-selected="course.catalog_nbr.trim() == courseNumber">
-          {{course.catalog_nbr.trim()}}
-        </option>
-      </select>
+          <select class="form-control" ng-model="courseNumber">
+            <option ng-repeat="course in courses" value="{{course.catalog_nbr.trim()}}" ng-selected="course.catalog_nbr.trim() == courseNumber">
+              {{course.catalog_nbr.trim()}}
+            </option>
+          </select>
 
-      <button ng-click="showTutors()">Show tutors</button>
+          <button ng-click="showTutors()" class="btn btn-default">Show tutors</button>
+        </form>
+
+        <div ng-show="selectedCourse">
+          Showing online tutors for {{selectedCourse}}
+          <button ng-click="requestTutor()" class="btn btn-default">Request a tutor</button>
+        </div>
+
+      </div>
+
+      <ul class="list-group">
+        <li class="list-group-item">
+          <div ng-controller="MapController">
+          <ui-gmap-google-map center='map.center' zoom='map.zoom'>
+            <ui-gmap-markers models="tutors"
+              idKey="id"
+              coords="'coords'"></ui-gmap-markers>
+          </ui-gmap-google-map>
+        </div>
+        </li>
+      </ul>
+
+      
     </div>
-
-    <div ng-show="selectedCourse">
-      Showing online tutors for {{selectedCourse}}
-      <button ng-click="requestTutor()">Request a tutor</button>
-    </div>
-
-    <div ng-controller="MapController">
-      <ui-gmap-google-map class="col-md-6" center='map.center' zoom='map.zoom'>
-        <ui-gmap-markers models="tutors"
-          idKey="id"
-          coords="'coords'"></ui-gmap-markers>
-      </ui-gmap-google-map>
-
-      <ol class="col-md-6">
-        <li ng-repeat="tutor in tutors">{{tutor}}</li>
-      </ol>
-    </div>
-
 
   </div>
 

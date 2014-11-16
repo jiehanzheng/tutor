@@ -2,9 +2,13 @@ Rails.application.routes.draw do
   get 'dispatch/learn'
   get 'dispatch/teach'
   get 'dispatch/record'
+  post 'dispatch/rate'
 
+  get 'sessions/signin'
+  post 'sessions/create'
   get 'sessions/create_cheat'
   post 'sessions/destroy'
+
 
 
   resources :users

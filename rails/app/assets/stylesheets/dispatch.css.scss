@@ -2,5 +2,42 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 #learn {
-  .angular-google-map-container { height: 400px; }
+  .angular-google-map-container { height: 450px; }
+}
+
+#negotiation_modal {
+  #chat {
+    height: 400px;
+
+    #messages {
+      height: 320px;
+      overflow-y: scroll;
+
+      .message {
+        margin-bottom: 5px;
+
+        padding-left: 2em;
+        text-indent: -2em;
+
+        .sender {
+          font-weight: bold;
+        }
+      }
+    }
+
+    form {
+      height: 80px;
+
+      input {
+        width: 100%;
+      }
+    }
+  }
+
+  #place {
+    select {
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+  }
 }

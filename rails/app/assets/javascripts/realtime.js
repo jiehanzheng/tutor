@@ -2,15 +2,31 @@ var app = angular.module('tutor', ['google-maps'.ns()]);
 
 var apiProxy = 'http://localhost:8080/duke_api/';
 
-app.controller('SessionController', ['$scope', '$http', function($scope, $http) {
+app.controller('SessionController', ['$scope', '$http', '$interval', '$location', function($scope, $http, $interval, $location) {
   $scope.inProgress = false;
   $scope.startTime = null;
+  $scope.isTutor = false;
 
-  $scope.socket.on('start tutoring', function(startTime) {
+  $scope.timeElapsed = "00:00:00";
+
+  $scope.socket.on('start tutoring', function(state) {
     $scope.$apply(function() {
       $scope.inProgress = true;
-      $scope.startTime = startTime;
+      $scope.startTime = state.startTime;
+      $scope.isTutor = state.isTutor;
+      $("#session_modal").modal({
+        backdrop: 'static'
+      });
+      
     });
+
+    $interval(function() {
+      var secondsElapsed = (Date.now() - $scope.startTime) / 1000;
+      var hours = parseInt( secondsElapsed / 3600 ) % 24;
+      var minutes = parseInt( secondsElapsed / 60 ) % 60;
+      var seconds = parseInt(secondsElapsed % 60, 10);
+      $scope.timeElapsed = (hours < 10 ? "0" + hours : hours) + ":" + (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds  < 10 ? "0" + seconds : seconds);
+    }, 1000);
   });
 
   $scope.endTutoring = function() {
@@ -20,6 +36,7 @@ app.controller('SessionController', ['$scope', '$http', function($scope, $http) 
   $scope.socket.on('end tutoring', function(token) {
     $scope.$apply(function() {
       $scope.inProgress = false;
+      window.location.reload();
     });
   });
 }]);
@@ -34,6 +51,9 @@ app.controller('NegotiationController', ['$scope', '$http', function($scope, $ht
     $scope.$apply(function() {
       $scope.negotiating = true;
       $scope.isTutor = isTutor;
+      $('#negotiation_modal').modal({
+        backdrop: 'static'
+      });
     });
   });
 
@@ -139,6 +159,10 @@ app.controller('NegotiationController', ['$scope', '$http', function($scope, $ht
   $scope.startTutoring = function() {
     $scope.socket.emit('start tutoring');
   };
+
+  $scope.socket.on('start tutoring', function() {
+    $('#negotiation_modal').modal('hide');
+  });
 
 }]);
 

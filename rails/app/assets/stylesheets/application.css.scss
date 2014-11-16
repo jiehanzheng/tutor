@@ -15,5 +15,13 @@
  */
 
 @import "bootstrap-sprockets";
+
+$grid-float-breakpoint: 0px;
 @import "bootstrap";
+
+
+body {
+  padding-top: 20px;
+}
+
 

@@ -4,6 +4,14 @@ class SessionsController < ApplicationController
     redirect_to :root
   end
 
+  def create
+
+  end
+
+  def signin
+    
+  end
+
   def destroy
     session[:user_id] = nil
   end

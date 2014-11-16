@@ -9,5 +9,11 @@ class ApplicationController < ActionController::Base
   end
   helper_method :current_user
 
+  before_action :set_unrated_tutoring_sessions
+  def set_unrated_tutoring_sessions
+    return if !current_user
+    @tutoring_sessions_without_rating_for_student = current_user.taught_sessions.where(:rating_for_student => nil)
+    @tutoring_sessions_without_rating_for_tutor = current_user.learnt_sessions.where(:rating_for_tutor => nil)
+  end
 
 end

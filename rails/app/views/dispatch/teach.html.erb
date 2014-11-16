@@ -1,5 +1,7 @@
 <div ng-app="tutor">
   <div ng-controller="TeachController">
+  <h1>Waiting for tutoring requests...</h1>
+
     <%= render 'session' %>
     <%= render 'negotiate' %>
 
@@ -9,6 +11,23 @@
       <button ng-click="acceptOffer()">Accept offer</button>
       <button ng-click="declineOffer()">Decline offer</button>
     </div>
+
+    <div id="session_modal" class="modal fade">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Pending offer</h4>
+          </div>
+          <div class="modal-body">
+            {{pendingOffer}}
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-primary" ng-click="acceptOffer()">Accept offer</button>
+            <button class="btn btn-primary" ng-click="declineOffer()">Decline offer</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
 
   </div>
 
