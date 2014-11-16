@@ -1,7 +1,41 @@
 var app = angular.module('tutor', ['google-maps'.ns()]);
 
+app.controller('NegotiationController', ['$scope', function($scope) {
+  $scope.negotiating = false;
+  $scope.chatMessages = [{ 
+    sender: 'System', text: 'Please say hi to each other and negotiate a meeting place!' }];
+
+
+}]);
+
 app.controller('TeachController', ['$scope', function($scope) {
-  
+  var socket = io('http://localhost:8080');
+  socket.emit('authenticate', window.userIdentityJWT);
+  socket.emit('become tutor', { latitude: 36.001869, longitude: -78.931487 });
+
+  // TODO: deal with multiple offers
+  $scope.socket = socket;
+
+  $scope.pendingOffer = null;
+
+  socket.on('offer', function(offer) {
+    $scope.$apply(function() {
+      $scope.pendingOffer = offer;
+    });
+  });
+
+  socket.on('offer expired', function() {
+
+  });
+
+  $scope.acceptOffer = function() {
+
+  };
+
+  $scope.declineOffer = function() {
+
+  };
+
 }]);
 
 app.controller('LearnController', ['$scope', '$http', function($scope, $http) {
@@ -18,6 +52,8 @@ app.controller('LearnController', ['$scope', '$http', function($scope, $http) {
 
   var socket = io('http://localhost:8080');
   socket.emit('authenticate', window.userIdentityJWT);
+
+  $scope.socket = socket;
 
   this.socketAuthenticated = false;
   socket.on('authenticated', function(user) {
@@ -68,9 +104,29 @@ app.controller('LearnController', ['$scope', '$http', function($scope, $http) {
 
     $scope.selectedCourse = $scope.subjectCode + ' ' + $scope.courseNumber;
 
-    socket.emit('list online tutors for course', $scope.selectedCourse);
     socket.emit('subscribe to tutor updates for course', $scope.selectedCourse);
+    socket.emit('list online tutors for course', $scope.selectedCourse);
   };
+
+  $scope.requestTutor = function() {
+    socket.emit('request tutor', $scope.selectedCourse);
+  };
+
+  socket.on('add tutor', function(tutor) {
+    console.debug('add tutor')
+    $scope.$apply(function() {
+      $scope.tutors.push(tutor);
+    });
+  });
+
+  socket.on('remove tutor', function(tutorId) {
+    console.debug('remove tutor')
+    $scope.$apply(function() {
+      _.remove($scope.tutors, function(tutor) {
+        return tutor.id == tutorId;
+      });
+    });
+  });
 }]);
 
 app.controller('MapController', ['$scope', function($scope) {

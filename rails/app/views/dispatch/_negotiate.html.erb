@@ -1,0 +1,10 @@
+<div ng-controller="NegotiationController">
+  <div ng-if="negotiating">
+    <div id="messages">
+      <div class="message" ng-repeat="chatMessage in chatMessages">
+        <span class="sender">{{chatMessage.sender}}</span>
+        <span class="text">{{chatMessage.text}}</span>
+      </div>
+    </div>
+  </div>
+</div>

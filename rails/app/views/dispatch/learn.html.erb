@@ -19,15 +19,22 @@
 
     <div ng-show="selectedCourse">
       Showing online tutors for {{selectedCourse}}
+      <button ng-click="requestTutor()">Request a tutor</button>
     </div>
 
     <div ng-controller="MapController">
       <ui-gmap-google-map class="col-md-6" center='map.center' zoom='map.zoom'>
-        <ui-gmap-markers models="learnCtrl.tutors"
+        <ui-gmap-markers models="tutors"
           idKey="id"
           coords="'coords'"></ui-gmap-markers>
       </ui-gmap-google-map>
+
+      <ol class="col-md-6">
+        <li ng-repeat="tutor in tutors">{{tutor}}</li>
+      </ol>
     </div>
+
+
   </div>
 
 </div>

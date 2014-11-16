@@ -21,8 +21,7 @@ var sockets = {};
 io.on('connection', function(socket) {
   debug('a user connected');
 
-  console.log("socket.id = " + socket.id);
-  sockets[socket.id] = { socket: socket };
+  sockets[socket.id] = socket;
   
   socket.on('authenticate', function(userIdentityJWT) {
     debug('authenticate');
@@ -33,6 +32,82 @@ io.on('connection', function(socket) {
     });
   });
 
+  socket.on('request tutor', function(course) {
+    if (!socket.user) {
+      return;
+    }
+
+    // queue currently online tutors
+    var socketsForCourse = [];
+    _.forEach(sockets, function (possibleSocket) {      
+      if (!possibleSocket.user) {
+        return;
+      }
+
+      if (!possibleSocket.user.tutor) {
+        return;
+      }
+
+      if (!possibleSocket.user.courses) {
+        return;
+      }
+
+      if (_.some(possibleSocket.user.courses, function(c) { return c == course })) {
+        socketsForCourse.push(possibleSocket);
+      }
+    });
+
+    // now let's ask
+    var lastTutorAskedSocket = null;
+    var askATutor = function() {
+      if (lastTutorAskedSocket != null) {
+        lastTutorAskedSocket.emit('offer expired', 'sorry you are too slow');
+      }
+
+      if (socketsForCourse.length == 0) {
+        student.emit('no tutors available');
+        return;
+      }
+
+      var tutorSocket = socketsForCourse[0];
+
+      // TODO: take into consideration exact delays (rather than 2s)
+
+      if (tutorSocket.disconnected) {
+        return askATutor();
+      }
+
+      tutorSocket.emit('offer', {
+        expiry: 20 /* seconds */,
+        student: socket.user
+      });
+      var nextTutorTimer = setTimeout(askATutor, 22000);
+      lastTutorAskedSocket = tutorSocket;
+      
+      tutorSocket.on('accept offer', function() {
+        tutorSocket.removeListener('accept offer');
+        clearTimeout(nextTutorTimer);
+        negotiateMeeting(/* student */ socket, tutorSocket);
+      });
+
+      tutorSocket.on('decline offer', function() {
+        tutorSocket.removeListener('decline offer');
+        clearTimeout(nextTutorTimer);
+        askATutor();
+      });
+    };
+
+    // now bootstrap the process by asking first tutor
+    askATutor();
+  });
+
+  var negotiateMeeting = function(studentSocket, tutorSocket) {
+    studentSocket.emit('negotiation start');
+    tutorSocket.emit('negotiation start');
+
+
+  };
+
   socket.on('become tutor', function(coords) {
     if (!socket.user) {
       return;
@@ -41,36 +116,55 @@ io.on('connection', function(socket) {
     socket.user.tutor = true;
     socket.user.coords = coords;
 
-    // TODO: subject potentially doesn't exist
-    for (var subject : socket.user.subjects) {
-      socket.to('tutor_by_subject.' + subject).emit('add tutor', notification);
-    }
+    debug('user wants to become tutor')
+    debug(socket.user);
+
+    // TODO: courses potentially doesn't exist
+    _.forEach(socket.user.courses, function(course) {
+      debug('broadcasting to ' + course + ' for addition');
+      socket.to('tutor_by_course.' + course).emit('add tutor', socket.user);
+    });
   });
 
   socket.on('list online tutors for course', function(course) {
-    for (var socket : sockets) {
-      if (socket.user == null) {
-        continue;
+    _.forEach(sockets, function (possibleSocket) {      
+      if (!possibleSocket.user) {
+        return;
       }
 
-      if (socket.user.tutor == null || !socket.user.tutor) {
-        continue;
+      if (!possibleSocket.user.tutor) {
+        return;
       }
 
-      if (socket.user.subjects == null || !socket.user.subjects)
-
-      if (_.some(socket.user.subjects, function(s) { s == course })) {
-        socket.emit('add tutor', socket.user);
+      if (!possibleSocket.user.courses) {
+        return;
       }
-    }
+
+      debug('checking if he/she teaches ' + course + ":");
+      debug(possibleSocket.user.courses);
+
+      if (_.some(possibleSocket.user.courses, function(c) { return c == course })) {
+        debug('yes!')
+        socket.emit('add tutor', possibleSocket.user);
+      }
+    });
   });
 
   socket.on('subscribe to tutor updates for course', function(course) {
-
+    socket.join('tutor_by_course.' + course);
   });
 
   socket.on('disconnect', function() {
+    if (socket.user) {
+      if (socket.user.courses && socket.user.tutor) {
+        _.forEach(socket.user.courses, function(course) {
+          debug('broadcasting to ' + course + ' for removal');
+          socket.to('tutor_by_course.' + course).emit('remove tutor', socket.user.id);
+        });
+      }
+    }
 
+    delete sockets[socket.id];
   });
 });
 
