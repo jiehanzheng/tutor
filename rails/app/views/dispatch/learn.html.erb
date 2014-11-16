@@ -1,6 +1,9 @@
 <div id="learn" ng-app="tutor">
 
   <div ng-controller="LearnController as learnCtrl">
+    
+    <%= render 'negotiate' %>
+  
     <div ng-hide="selectedCourse">
       <select ng-model="subjectCode" ng-change="updateCourseNumbers(); courseNumber = null">
         <option ng-repeat="subject in subjects" value="{{subject.code}}" ng-selected="subject.code == subjectCode">
@@ -34,7 +37,6 @@
       </ol>
     </div>
 
-    <%= render 'negotiate' %>
 
   </div>
 

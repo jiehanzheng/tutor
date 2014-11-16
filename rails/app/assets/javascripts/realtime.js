@@ -4,12 +4,14 @@ var apiProxy = 'http://localhost:8080/duke_api/';
 
 app.controller('NegotiationController', ['$scope', '$http', function($scope, $http) {
   $scope.negotiating = false;
+  $scope.isTutor = false;
   $scope.chatMessages = [{ 
     sender: 'System', text: 'Please say hi to each other and negotiate a meeting place!' }];
 
-  $scope.socket.on('negotiation start', function() {
+  $scope.socket.on('negotiation start', function(isTutor) {
     $scope.$apply(function() {
       $scope.negotiating = true;
+      $scope.isTutor = isTutor;
     });
   });
 
@@ -66,7 +68,7 @@ app.controller('NegotiationController', ['$scope', '$http', function($scope, $ht
   $scope.updatePlaces = function() {
     $scope.places = [];
 
-    if ($scope.placeCategory == null || $scope.placeCategory == {}) {
+    if (_.size($scope.placeCategory) == 0) {
       return;
     }
 
@@ -88,6 +90,10 @@ app.controller('NegotiationController', ['$scope', '$http', function($scope, $ht
       });
   };
 
+  $scope.$watch('placeCategory', function(newValue, oldValue) {
+    $scope.updatePlaces();
+  });
+
   $scope.pushPlaceCategoryUpdate = function() {
     $scope.socket.emit('change place category', $scope.placeCategory);
   };
@@ -107,6 +113,10 @@ app.controller('NegotiationController', ['$scope', '$http', function($scope, $ht
       $scope.place = place;
     });
   });
+
+  $scope.startTutoring = function() {
+
+  };
 
 }]);
 

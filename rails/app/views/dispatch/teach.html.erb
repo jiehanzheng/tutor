@@ -1,5 +1,7 @@
 <div ng-app="tutor">
   <div ng-controller="TeachController">
+    <%= render 'negotiate' %>
+    
     <div ng-if="pendingOffer">
       THERE IS A PENDING OFFER!
       {{pendingOffer}}
@@ -7,7 +9,6 @@
       <button ng-click="declineOffer()">Decline offer</button>
     </div>
 
-    <%= render 'negotiate' %>
   </div>
 
 </div>

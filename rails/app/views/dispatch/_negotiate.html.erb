@@ -2,7 +2,7 @@
   <div ng-show="negotiating">
     NEGOTIATING!!
     <div id="place">
-      <select ng-model="placeCategory" ng-options="c.name group by c.category for c in placeCategories track by c.catId" ng-change="updatePlaces(); pushPlaceCategoryUpdate()"></select>
+      <select ng-model="placeCategory" ng-options="c.name group by c.category for c in placeCategories track by c.catId" ng-change="pushPlaceCategoryUpdate()"></select>
       <select ng-model="place" ng-options="p.name for p in places track by p.place_id" ng-change="pushPlaceUpdate()"></select>
     </div>
 
