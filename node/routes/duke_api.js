@@ -14,8 +14,9 @@ var redisClient = redis.createClient();
 router.use('/', function(req, res, next) {
   var parsedUrl = url.parse(req.url, true);
   var pathname = parsedUrl.pathname;
+  var query = parsedUrl.query;
 
-  var cacheKey = DUKE_API_CACHE_NS + ':' + pathname;
+  var cacheKey = DUKE_API_CACHE_NS + ':' + JSON.stringify({pathname: pathname, query: query});
 
   res.set('Access-Control-Allow-Origin', '*');
 
@@ -26,7 +27,6 @@ router.use('/', function(req, res, next) {
     } else {
       debug('cache missed');
       
-      var query = {};
       query['access_token'] = process.env.DUKE_API_KEY;
 
       var apiRequest = https.get({

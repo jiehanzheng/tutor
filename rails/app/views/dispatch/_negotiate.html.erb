@@ -2,17 +2,8 @@
   <div ng-show="negotiating">
     NEGOTIATING!!
     <div id="place">
-<!--       <select ng-model="subjectCode" ng-change="updateCourseNumbers(); courseNumber = null">
-        <option ng-repeat="subject in subjects" value="{{subject.code}}" ng-selected="subject.code == subjectCode">
-          {{subject.code}}
-        </option>
-      </select>
-
-      <select ng-model="courseNumber">
-        <option ng-repeat="course in courses" value="{{course.catalog_nbr.trim()}}" ng-selected="course.catalog_nbr.trim() == courseNumber">
-          {{course.catalog_nbr.trim()}}
-        </option>
-      </select> -->
+      <select ng-model="placeCategory" ng-options="c.name group by c.category for c in placeCategories track by c.catId" ng-change="updatePlaces(); pushPlaceCategoryUpdate()"></select>
+      <select ng-model="place" ng-options="p.name for p in places track by p.place_id" ng-change="pushPlaceUpdate()"></select>
     </div>
 
     <div id="chat">

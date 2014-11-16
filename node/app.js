@@ -65,7 +65,7 @@ io.on('connection', function(socket) {
       }
 
       if (socketsForCourse.length == 0) {
-        student.emit('no tutors available');
+        socket.emit('no tutors available');
         return;
       }
 
@@ -129,6 +129,22 @@ io.on('connection', function(socket) {
         sender: 'Tutor',
         text: messageText
       });
+    });
+
+    studentSocket.on('change place category', function(placeCategory) {
+      tutorSocket.emit('change place category', placeCategory);
+    });
+
+    tutorSocket.on('change place category', function(placeCategory) {
+      studentSocket.emit('change place category', placeCategory);
+    });
+
+    studentSocket.on('change place', function(place) {
+      tutorSocket.emit('change place', place);
+    });
+
+    tutorSocket.on('change place', function(place) {
+      studentSocket.emit('change place', place);
     });
   };
 

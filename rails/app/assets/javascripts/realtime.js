@@ -27,7 +27,11 @@ app.controller('NegotiationController', ['$scope', '$http', function($scope, $ht
   });
 
   // categories flattened to just one level
-  $scope.categories = [];
+  $scope.placeCategory = {}; 
+  $scope.place = {};
+
+  $scope.placeCategories = [];
+  $scope.places = [];
 
   // load places category
   $http.get(apiProxy + 'places/categories')
@@ -35,7 +39,7 @@ app.controller('NegotiationController', ['$scope', '$http', function($scope, $ht
       var flattenedCategories = [];
 
       var flatten = function(nestedCategories, category, namePrefix) {
-        var name = namePrefix + ' - ' + nestedCategories.category;
+        var name = (namePrefix.length > 0 ? namePrefix + ' - ' : "") + nestedCategories.category;
 
         flattenedCategories.push({
           name: name,
@@ -53,11 +57,56 @@ app.controller('NegotiationController', ['$scope', '$http', function($scope, $ht
       };
 
       _.forEach(nestedCategories, function(firstLevelCategory) {
-        flatten(firstLevelCategory, firstLevelCategory.category, firstLevelCategory.category);
+        flatten(firstLevelCategory, firstLevelCategory.category, "");
       });
 
-      $scope.categories = flattenedCategories;
+      $scope.placeCategories = flattenedCategories;
     });
+
+  $scope.updatePlaces = function() {
+    $scope.places = [];
+
+    if ($scope.placeCategory == null || $scope.placeCategory == {}) {
+      return;
+    }
+
+    // WTF??  THIS MAKES NO FREAKING SENSE...
+    var lookupTag = $scope.placeCategory.catId.replace(/^.*%2C/, '');
+
+    $http.get(apiProxy + 'places/items?tag=' + encodeURIComponent(lookupTag))
+      .success(function(data) {
+        console.log(data);
+        try {
+          $scope.places = data;
+        } catch (err) {
+          console.error(err);
+        }
+      })
+      .error(function(data) {
+        console.error('places fetch error');
+        console.error(data);
+      });
+  };
+
+  $scope.pushPlaceCategoryUpdate = function() {
+    $scope.socket.emit('change place category', $scope.placeCategory);
+  };
+
+  $scope.pushPlaceUpdate = function() {
+    $scope.socket.emit('change place', $scope.place);
+  };
+
+  $scope.socket.on('change place category', function(placeCategory) {
+    $scope.$apply(function() {
+      $scope.placeCategory = placeCategory;
+    });
+  });
+
+  $scope.socket.on('change place', function(place) {
+    $scope.$apply(function() {
+      $scope.place = place;
+    });
+  });
 
 }]);
 
@@ -140,7 +189,7 @@ app.controller('LearnController', ['$scope', '$http', function($scope, $http) {
           console.error(err);
         }
       })
-      .error(function() {
+      .error(function(data) {
         console.error('course number error');
         console.error(data);
       });
